@@ -1067,7 +1067,7 @@ const PASSPORT_PATHS = [
 
 const STORY_FIELDS = ['order', 'section', 'message', 'role', 'transition', 'recommendation', 'status', 'fingerprint'];
 const PATCH_KEYS = ['format', 'version', 'expected_revision', 'passport_patches', 'storyline_patches'];
-const PROJECTIONS = ['project', 'current-slide', 'full'];
+const PROJECTIONS = ['project', 'section', 'current-slide', 'full'];
 
 function fail(code, message) {
   throw new SF.StorageError(code, message);
@@ -1111,7 +1111,7 @@ function findSlide(state, slideId) {
 function projectContext(state, options = {}) {
   if (!state || typeof state !== 'object') fail('BAD_PATCH', 'A stored state is required');
   const projection = options.projection;
-  if (!PROJECTIONS.includes(projection)) fail('BAD_PATH', 'projection must be project, current-slide, or full');
+  if (!PROJECTIONS.includes(projection)) fail('BAD_PATH', 'projection must be project, section, current-slide, or full');
   const context = {
     format: 'SLIDEFACTORY_CONTEXT',
     version: 1,
@@ -1127,6 +1127,24 @@ function projectContext(state, options = {}) {
   };
   if (projection === 'project') {
     context.storyline = summarizeStoryline(state.storyline);
+    return context;
+  }
+  if (projection === 'section') {
+    const section = String(options.section || '').trim();
+    if (!section) fail('BAD_PATH', 'section is required');
+    const slides = state.storyline && state.storyline.slides ? state.storyline.slides : [];
+    context.section = section;
+    context.storyline = {
+      revision: state.storyline ? state.storyline.revision : 0,
+      status: state.storyline ? state.storyline.status : 'not-built',
+      slides: slides.filter(slide => slide.section === section).map(clone)
+    };
+    context.deckIndex = slides.map(slide => {
+      const item = { slide_id: slide.slide_id, order: slide.order };
+      if (slide.section != null) item.section = slide.section;
+      if (slide.status != null) item.status = slide.status;
+      return item;
+    });
     return context;
   }
   const slideId = options.currentSlideId == null || options.currentSlideId === ''
@@ -1147,6 +1165,49 @@ function projectContext(state, options = {}) {
   context.storyline = clone(state.storyline);
   context.slideFingerprints = clone(fingerprints);
   return context;
+}
+
+function identifySlides(storyline, deckSlides) {
+  const deck = (deckSlides || []).map(slide => ({
+    slide_id: String(slide.slideId != null ? slide.slideId : slide.slide_id),
+    order: slide.order,
+    text: slide.text
+  }));
+  const byId = new Map();
+  for (const slide of deck) {
+    if (byId.has(slide.slide_id)) fail('CONFLICT', `Duplicate slide id ${slide.slide_id}`);
+    byId.set(slide.slide_id, slide);
+  }
+  const bound = [];
+  const detached = [];
+  const used = new Set();
+  for (const entry of (storyline && storyline.slides) || []) {
+    const slideId = String(entry.slide_id);
+    const live = byId.get(slideId);
+    if (!live) {
+      detached.push({ slide_id: slideId, order: entry.order, message: entry.message, section: entry.section });
+      continue;
+    }
+    used.add(slideId);
+    const current = SF.fingerprintFromSlides([live]).slides[0];
+    bound.push({
+      slide_id: slideId,
+      order: live.order,
+      storedOrder: entry.order,
+      message: entry.message,
+      section: entry.section,
+      fingerprint: current.fingerprint,
+      changed: entry.fingerprint ? entry.fingerprint !== current.fingerprint : false
+    });
+  }
+  return {
+    bound,
+    detached,
+    unbound: deck.filter(slide => !used.has(slide.slide_id)).map(slide => ({
+      slide_id: slide.slide_id,
+      order: slide.order
+    }))
+  };
 }
 
 function serializeContext(context) {
@@ -1318,6 +1379,7 @@ const api = {
   PROJECTIONS,
   PASSPORT_PATHS,
   projectContext,
+  identifySlides,
   serializeContext,
   parsePatch,
   applyPatch
