@@ -18,6 +18,7 @@ Office.onReady(info => {
   bind('patch', patchField);
   bind('paste', pasteApply);
   bind('copy-project', () => copyProjection('project'));
+  bind('copy-section', () => copyProjection('section'));
   bind('copy-slide', () => copyProjection('current-slide'));
   bind('copy-full', () => copyProjection('full'));
   if (info.host === Office.HostType.PowerPoint) show(readState());
@@ -154,20 +155,34 @@ async function copyProjection(projection) {
   const state = SlideFactory.getStateFromXml(await readXml());
   let currentSlideId = null;
   let fingerprints = [];
-  if (projection !== 'project') {
+  if (projection === 'current-slide' || projection === 'full') {
     currentSlideId = await selectedSlideId();
     try {
       fingerprints = (await slideFingerprints()).slides;
     } catch (err) {
       fingerprints = [];
     }
+  } else if (projection === 'section') {
+    currentSlideId = await selectedSlideId();
   }
-  const context = SlideFactoryPlus.projectContext(state, { projection, currentSlideId, fingerprints });
+  let section = '';
+  if (projection === 'section') {
+    const typed = document.getElementById('section-name');
+    section = typed ? typed.value.trim() : '';
+    if (!section && currentSlideId && state.storyline && state.storyline.slides) {
+      const entry = state.storyline.slides.find(slide => slide.slide_id === currentSlideId);
+      section = entry && entry.section ? entry.section : '';
+      if (typed && section) typed.value = section;
+    }
+  }
+  const context = SlideFactoryPlus.projectContext(state, { projection, currentSlideId, fingerprints, section });
   const text = SlideFactoryPlus.serializeContext(context);
   const box = document.getElementById('context');
   if (box) box.value = text;
   const copied = await copyText(text);
-  setStatus(copied ? 'Контекст скопирован' : 'Контекст в поле — скопируйте его');
+  setStatus(copied
+    ? 'Контекст скопирован один раз на сессию. Один патч — на всю итерацию.'
+    : 'Контекст в поле. Один патч — на всю итерацию.');
   log(context);
 }
 
