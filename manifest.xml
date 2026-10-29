@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xsi:type="TaskPaneApp">
+  <Id>7c3a1e2b-4f58-4d1a-9b6e-2a8f0c5d71e4</Id>
+  <Version>1.1.0.0</Version>
+  <ProviderName>SlideFactory</ProviderName>
+  <DefaultLocale>ru-RU</DefaultLocale>
+  <DisplayName DefaultValue="SlideFactory Storage"/>
+  <Description DefaultValue="ChatGPT Plus bridge: copy a SlideFactory context and paste a SLIDEFACTORY_PATCH back into the open presentation."/>
+  <IconUrl DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/icon-64.png"/>
+  <SupportUrl DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/taskpane.html?v=2"/>
+  <AppDomains>
+    <AppDomain>https://JohnP512.github.io/slidefactory-storage-addin</AppDomain>
+  </AppDomains>
+  <Hosts>
+    <Host Name="Presentation"/>
+  </Hosts>
+  <Requirements>
+    <Sets DefaultMinVersion="1.1">
+      <Set Name="PowerPointApi" MinVersion="1.7"/>
+      <Set Name="SharedRuntime" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/taskpane.html?v=2"/>
+  </DefaultSettings>
+  <Permissions>ReadWriteDocument</Permissions>
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Presentation">
+        <Runtimes>
+          <Runtime resid="Taskpane.Url" lifetime="long"/>
+        </Runtimes>
+        <DesktopFormFactor>
+          <GetStarted>
+            <Title resid="GetStarted.Title"/>
+            <Description resid="GetStarted.Description"/>
+            <LearnMoreUrl resid="Taskpane.Url"/>
+          </GetStarted>
+          <FunctionFile resid="Taskpane.Url"/>
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <OfficeTab id="TabHome">
+              <Group id="SF.Group">
+                <Label resid="Group.Label"/>
+                <Icon>
+                  <bt:Image size="16" resid="Icon.16"/>
+                  <bt:Image size="32" resid="Icon.32"/>
+                  <bt:Image size="80" resid="Icon.80"/>
+                </Icon>
+                <Control xsi:type="Button" id="SF.Open">
+                  <Label resid="Open.Label"/>
+                  <Supertip>
+                    <Title resid="Open.Label"/>
+                    <Description resid="Open.Tip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16"/>
+                    <bt:Image size="32" resid="Icon.32"/>
+                    <bt:Image size="80" resid="Icon.80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>SF.Pane</TaskpaneId>
+                    <SourceLocation resid="Taskpane.Url"/>
+                  </Action>
+                </Control>
+                <Control xsi:type="Button" id="SF.Verify">
+                  <Label resid="Verify.Label"/>
+                  <Supertip>
+                    <Title resid="Verify.Label"/>
+                    <Description resid="Verify.Tip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16"/>
+                    <bt:Image size="32" resid="Icon.32"/>
+                    <bt:Image size="80" resid="Icon.80"/>
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>sfVerify</FunctionName>
+                  </Action>
+                </Control>
+                <Control xsi:type="Button" id="SF.Initialize">
+                  <Label resid="Init.Label"/>
+                  <Supertip>
+                    <Title resid="Init.Label"/>
+                    <Description resid="Init.Tip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16"/>
+                    <bt:Image size="32" resid="Icon.32"/>
+                    <bt:Image size="80" resid="Icon.80"/>
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>sfInitialize</FunctionName>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon.16" DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/icon-16.png"/>
+        <bt:Image id="Icon.32" DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/icon-32.png"/>
+        <bt:Image id="Icon.80" DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/icon-80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/taskpane.html?v=2"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="Group.Label" DefaultValue="SlideFactory"/>
+        <bt:String id="Open.Label" DefaultValue="Паспорт"/>
+        <bt:String id="Verify.Label" DefaultValue="Проверить"/>
+        <bt:String id="Init.Label" DefaultValue="Создать"/>
+        <bt:String id="GetStarted.Title" DefaultValue="Хранилище SlideFactory"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="GetStarted.Description" DefaultValue="Один Custom XML part для паспорта и смысловой карты. Запись делает эта надстройка, а не сгенерированный скрипт."/>
+        <bt:String id="Open.Tip" DefaultValue="Открыть панель состояния проекта."/>
+        <bt:String id="Verify.Tip" DefaultValue="Проверить, что часть Custom XML одна, схема верна и контрольная сумма сходится."/>
+        <bt:String id="Init.Tip" DefaultValue="Создать пустую часть Custom XML, если её ещё нет. Повтор не затирает существующий паспорт."/>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>
