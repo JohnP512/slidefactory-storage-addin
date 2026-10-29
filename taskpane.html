@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>SlideFactory Storage</title>
   <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-  <script src="slidefactory.js?v=2"></script>
+  <script src="slidefactory.js?v=3"></script>
   <link rel="stylesheet" href="taskpane.css"/>
 </head>
 <body>
@@ -25,9 +25,11 @@
       <h2>Copy Context</h2>
       <div class="actions">
         <button id="copy-project" type="button">Project</button>
+        <button id="copy-section" type="button">Section</button>
         <button id="copy-slide" type="button">Current Slide</button>
         <button id="copy-full" type="button">Full</button>
       </div>
+      <label>Раздел <input id="section-name" placeholder="из текущего слайда, если пусто"/></label>
       <textarea id="context" rows="8" readonly spellcheck="false"></textarea>
     </section>
     <section>
