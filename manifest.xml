@@ -9,11 +9,11 @@
   <DefaultLocale>ru-RU</DefaultLocale>
   <DisplayName DefaultValue="SlideFactory Storage"/>
   <Description DefaultValue="ChatGPT Plus bridge: copy a SlideFactory context and paste a SLIDEFACTORY_PATCH back into the open presentation."/>
-  <IconUrl DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/icon-64.png"/>
-  <SupportUrl DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/taskpane.html?v=2"/>
+  <IconUrl DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/icon-64.png"/>
+  <SupportUrl DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/taskpane.html?v=2"/>
   <AppDomains>
-    <AppDomain>https://JohnP512.github.io/slidefactory-storage-addin</AppDomain>
+    <AppDomain>https://johnp512.github.io/slidefactory-storage-addin</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Presentation"/>
@@ -25,7 +25,7 @@
     </Sets>
   </Requirements>
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/taskpane.html?v=2"/>
+    <SourceLocation DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/taskpane.html?v=2"/>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
@@ -104,12 +104,12 @@
     </Hosts>
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16" DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/icon-16.png"/>
-        <bt:Image id="Icon.32" DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/icon-32.png"/>
-        <bt:Image id="Icon.80" DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/icon-80.png"/>
+        <bt:Image id="Icon.16" DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/icon-16.png"/>
+        <bt:Image id="Icon.32" DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/icon-32.png"/>
+        <bt:Image id="Icon.80" DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://JohnP512.github.io/slidefactory-storage-addin/taskpane.html?v=2"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/taskpane.html?v=2"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="Group.Label" DefaultValue="SlideFactory"/>
