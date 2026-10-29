@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>SlideFactory Storage</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script>window.SF_LIVE_TEST=true;</script>
+  <script src="slidefactory.131.js"></script>
+  <link rel="stylesheet" href="taskpane.131.css"/>
+</head>
+<body>
+  <main>
+    <header>
+      <h1 id="build-title">SlideFactory Storage 1.3.1</h1>
+      <p id="status">Ожидание PowerPoint…</p>
+    </header>
+    <section id="summary"></section>
+    <section class="actions">
+      <button id="refresh" type="button">Прочитать</button>
+      <button id="verify" type="button">Проверить</button>
+      <button id="init" type="button">Создать часть</button>
+    </section>
+    <section>
+      <h2>Copy Context</h2>
+      <div class="actions">
+        <button id="copy-project" type="button">Project</button>
+        <button id="copy-section" type="button">Section</button>
+        <button id="copy-slide" type="button">Current Slide</button>
+        <button id="copy-full" type="button">Full</button>
+      </div>
+      <label>Раздел <input id="section-name" placeholder="из текущего слайда, если пусто"/></label>
+      <textarea id="context" rows="8" readonly spellcheck="false"></textarea>
+    </section>
+    <section>
+      <h2>Paste &amp; Apply</h2>
+      <textarea id="patch" rows="8" spellcheck="false" placeholder='{"format":"SLIDEFACTORY_PATCH","version":1,"expected_revision":1,"passport_patches":[{"path":"goals.learning","value":""}]}'></textarea>
+      <button id="paste" type="button">Paste &amp; Apply</button>
+    </section>
+    <section>
+      <h2>Одно поле</h2>
+      <label>expected_revision <input id="expected" inputmode="numeric"/></label>
+      <label>Путь <input id="path" value="goals.learning"/></label>
+      <label>Значение <textarea id="value" rows="3"></textarea></label>
+      <button id="patch" type="button">Записать поле</button>
+    </section>
+    <pre id="log"></pre>
+  </main>
+  <script src="taskpane.js"></script>
+</body>
+</html>
