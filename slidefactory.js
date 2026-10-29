@@ -189,9 +189,26 @@ function textOf(el) {
   return s;
 }
 
+const XSI_NS = 'http://www.w3.org/2001/XMLSchema-instance';
+
+function removeNil(el) {
+  if (!el || !el.attributes) return;
+  for (let i = el.attributes.length - 1; i >= 0; i--) {
+    const attr = el.attributes[i];
+    const local = attr.localName || attr.name;
+    const named = attr.name || '';
+    if (local === 'nil' || named === 'xsi:nil') {
+      if (!attr.namespaceURI || attr.namespaceURI === XSI_NS || named === 'xsi:nil') {
+        el.removeAttributeNode(attr);
+      }
+    }
+  }
+}
+
 function setText(el, value) {
-  while (el.firstChild) el.removeChild(el.firstChild);
   const text = value == null ? '' : String(value);
+  if (text.length) removeNil(el);
+  while (el.firstChild) el.removeChild(el.firstChild);
   if (text.length) el.appendChild(el.ownerDocument.createTextNode(text));
 }
 
@@ -1231,6 +1248,9 @@ function extractJson(text) {
 function parsePatch(input) {
   const data = typeof input === 'string' || input == null ? extractJson(input) : input;
   if (!data || typeof data !== 'object' || Array.isArray(data)) fail('BAD_PATCH', 'SLIDEFACTORY_PATCH must be an object');
+  if (Array.isArray(data.patch) || data.op || (typeof data.path === 'string' && data.path.indexOf('/passport') === 0)) {
+    fail('BAD_PATCH', 'Use passport_patches:[{path:"goals.learning", value:"..."}], not JSON Patch op/path.');
+  }
   exactKeys(data, PATCH_KEYS, 'SLIDEFACTORY_PATCH');
   if (data.format !== 'SLIDEFACTORY_PATCH') fail('BAD_PATCH', 'format must be SLIDEFACTORY_PATCH');
   if (data.version !== 1) fail('BAD_PATCH', 'version must be 1');
@@ -1335,6 +1355,49 @@ function passportPayload(patches) {
   return passport;
 }
 
+function valueAt(passport, path) {
+  const key = normalizePath(path);
+  if (!passport) return undefined;
+  if (key === 'goals.business' || key === 'goals.communication' || key === 'goals.learning') {
+    return passport.goals ? passport.goals[key.slice(6)] : undefined;
+  }
+  if (key === 'projecttitle') return passport.projectTitle;
+  if (key === 'businesscontext') return passport.businessContext;
+  if (key === 'mainmessage') return passport.mainMessage;
+  if (key === 'openquestions') return passport.openQuestions;
+  if (key === 'project_stage') return passport.project_stage;
+  if (key === 'hunt_stage.current' || key === 'hunt_stage.target') {
+    return passport.hunt_stage ? passport.hunt_stage[key.slice(11)] : undefined;
+  }
+  if (key === 'value_proposition.topic' || key === 'value_proposition.presentation') {
+    return passport.value_proposition ? passport.value_proposition[key.slice('value_proposition.'.length)] : undefined;
+  }
+  return passport[key];
+}
+
+function sameValue(actual, expected) {
+  if (actual === expected) return true;
+  if (expected && typeof expected === 'object') return SF.canonical(actual) === SF.canonical(expected);
+  return false;
+}
+
+function persistedMatches(patch, readBackXml) {
+  const parsed = patch && patch.passport_patches ? patch : parsePatch(patch);
+  const state = SF.getStateFromXml(readBackXml);
+  for (const item of parsed.passport_patches) {
+    if (!sameValue(valueAt(state.passport, item.path), item.value)) return false;
+  }
+  const slides = state.storyline && state.storyline.slides ? state.storyline.slides : [];
+  for (const item of parsed.storyline_patches || []) {
+    const slide = slides.find(entry => entry.slide_id === item.slide_id);
+    if (!slide) return false;
+    for (const [key, value] of Object.entries(item.patch)) {
+      if (!sameValue(slide[key], value)) return false;
+    }
+  }
+  return true;
+}
+
 function applyPatch(xml, input, options = {}) {
   const patch = parsePatch(input);
   if (xml == null || String(xml).trim() === '') fail('NOT_FOUND', 'No SlideFactory Custom XML part. Initialize it in the task pane first.');
@@ -1367,10 +1430,15 @@ function applyPatch(xml, input, options = {}) {
     }
   }
   const view = SF.getStateFromXml(currentXml);
+  const finalXml = wrote ? currentXml : String(xml);
+  if (wrote && !persistedMatches(patch, finalXml)) {
+    fail('VERIFY_FAILED', 'Requested value was not persisted. Revision was not advanced.');
+  }
   return {
     wrote,
-    xml: wrote ? currentXml : String(xml),
-    semantic: wrote ? SF.semanticFromXml(currentXml) : SF.semanticFromXml(String(xml)),
+    xml: finalXml,
+    patch,
+    semantic: SF.semanticFromXml(finalXml),
     result: Object.assign({}, view, { status: wrote ? 'saved' : 'unchanged' })
   };
 }
@@ -1382,6 +1450,7 @@ const api = {
   identifySlides,
   serializeContext,
   parsePatch,
+  persistedMatches,
   applyPatch
 };
 
