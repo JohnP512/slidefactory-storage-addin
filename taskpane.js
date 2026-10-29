@@ -341,13 +341,19 @@ async function write(mutator) {
     await context.sync();
     const check = collection.getByNamespace(SlideFactory.NS);
     const checkCount = check.getCount();
-    const checkXml = check.getOnlyItem().getXml();
+    const readBack = check.getOnlyItem().getXml();
     await context.sync();
-    if (checkCount.value !== 1) throw new SlideFactory.StorageError('VERIFY_FAILED', 'Write verification failed: part count');
-    if (!SlideFactory.same(SlideFactory.semanticFromXml(checkXml.value), applied.semantic)) {
-      throw new SlideFactory.StorageError('VERIFY_FAILED', 'Write verification failed: content differs');
+    const readXmlText = readBack.value;
+    const semanticOk = SlideFactory.same(SlideFactory.semanticFromXml(readXmlText), applied.semantic);
+    const valuesOk = !applied.patch || SlideFactoryPlus.persistedMatches(applied.patch, readXmlText);
+    if (checkCount.value !== 1 || !semanticOk || !valuesOk) {
+      if (xml && part) {
+        part.setXml(xml);
+        await context.sync();
+      }
+      throw new SlideFactory.StorageError('VERIFY_FAILED', 'Requested value was not persisted. The previous revision was restored.');
     }
-    return Object.assign({ status: 'saved' }, SlideFactory.getStateFromXml(checkXml.value));
+    return Object.assign({ status: 'saved' }, SlideFactory.getStateFromXml(readXmlText));
   });
 }
 
