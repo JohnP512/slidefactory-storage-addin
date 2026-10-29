@@ -4,14 +4,14 @@
            xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
            xsi:type="TaskPaneApp">
   <Id>7c3a1e2b-4f58-4d1a-9b6e-2a8f0c5d71e4</Id>
-  <Version>1.3.0.0</Version>
+  <Version>1.3.1.0</Version>
   <ProviderName>SlideFactory</ProviderName>
   <DefaultLocale>ru-RU</DefaultLocale>
   <DisplayName DefaultValue="SlideFactory Storage"/>
   <Description DefaultValue="ChatGPT Plus bridge: copy a SlideFactory context and paste a SLIDEFACTORY_PATCH back into the open presentation."/>
   <IconUrl DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/icon-64.png"/>
-  <SupportUrl DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/taskpane.html?v=4"/>
+  <SupportUrl DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/taskpane.131.html"/>
   <AppDomains>
     <AppDomain>https://johnp512.github.io</AppDomain>
   </AppDomains>
@@ -25,7 +25,7 @@
     </Sets>
   </Requirements>
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/taskpane.html?v=4"/>
+    <SourceLocation DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/taskpane.131.html"/>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
@@ -109,7 +109,7 @@
         <bt:Image id="Icon.80" DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/taskpane.html?v=4"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://johnp512.github.io/slidefactory-storage-addin/taskpane.131.html"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="Group.Label" DefaultValue="SlideFactory"/>
